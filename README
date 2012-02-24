@@ -28,3 +28,20 @@ I used it for figuring how to cut material with least amount of waste
 run it:
 
 groovy pack3d.groovy 5,5,5 1,1,1
+java pack3d 5,5,5 1,1,1
+./pack3d 5,5,5 1,1,1
+
+some benchmarks:
+
+for 50 x 50 x 50 and you want 2 x 2 x 2
+
+groovy: 325 ms
+java: 10 ms
+c:  2 ms
+
+for larger 500,500,500 and you want 2 x 2 x 2
+
+groovy: (NA too freaking slow to measure)
+java: 5198 ms
+arash.sharif: c: 1162 ms
+

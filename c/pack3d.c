@@ -216,9 +216,10 @@ main(int argc, char * argv[])
 
 	gettimeofday(&end);
 	
-	long execTime = (end.tv_usec  - start.tv_usec) ;
+	long execTimeS = end.tv_sec - start.tv_sec;
+	long execTimeMicS = end.tv_usec  - start.tv_usec ;
 
-	float fexecTime = ((float)execTime)/1000;
+	float fexecTime = (execTimeS*1000) + ((float)execTimeMicS)/1000;
 
 	printf("found %d fits in %f ms\n", fitCount, fexecTime);
 
