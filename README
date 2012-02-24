@@ -43,5 +43,5 @@ for larger 500,500,500 and you want 2 x 2 x 2
 
 groovy: (NA too freaking slow to measure)
 java: 5198 ms
-arash.sharif: c: 1162 ms
+c: 1162 ms
 
