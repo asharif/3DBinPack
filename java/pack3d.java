@@ -3,29 +3,38 @@ public class  pack3d {
 	
 	public static class shape {
 		
-		int w;
-		int h;
-		int l;
+		float w;
+		float h;
+		float l;
 		shape d;
 		shape r;
 		shape b;
 	}
 
 	private static int fitCount = 0;
-
+	private static float tolKerf;
 
 	public static void main(String[] args) {
+
+
+		if ( args.length < 3 ) {
+                        System.out.println("3 arguments required: bin size (eg. 5x5x5), box size (eg. 1x1x1) and tol+kerf (eg 1.25)");
+                        System.exit(1);
+                }
+
 
 		shape bin = new shape();
 		shape box = new shape();
 		
-		bin.w = Integer.parseInt(args[0].split(",")[0]);
-		bin.h = Integer.parseInt(args[0].split(",")[1]);
-		bin.l = Integer.parseInt(args[0].split(",")[2]);
+		bin.w = Float.parseFloat(args[0].split("x")[0]);
+		bin.h = Float.parseFloat(args[0].split("x")[1]);
+		bin.l = Float.parseFloat(args[0].split("x")[2]);
 	
-		box.w = Integer.parseInt(args[1].split(",")[0]);
-		box.h = Integer.parseInt(args[1].split(",")[1]);
-		box.l = Integer.parseInt(args[1].split(",")[2]);		
+		box.w = Float.parseFloat(args[1].split("x")[0]);
+		box.h = Float.parseFloat(args[1].split("x")[1]);
+		box.l = Float.parseFloat(args[1].split("x")[2]);		
+
+		tolKerf = Float.parseFloat(args[2]);
 
 		long start = System.currentTimeMillis();
 		
@@ -44,7 +53,7 @@ public class  pack3d {
 		//sort both bin and box
 		if ( bin.w < bin.h) {
 
-		        int tmpw = bin.w;
+		        float tmpw = bin.w;
 		        bin.w = bin.h;
 		        bin.h = tmpw;
 		}
@@ -52,7 +61,7 @@ public class  pack3d {
 
 		if ( box.w < box.h) {
 
-		        int tmpw = box.w;
+		        float tmpw = box.w;
 		        box.w = box.h;
 		        box.h = tmpw;
 		}
@@ -60,7 +69,7 @@ public class  pack3d {
 
 		if ( bin.h < bin.l ) {
 
-                	int tmph = bin.h;
+                	float tmph = bin.h;
                 	bin.h = bin.l;
                 	bin.l = tmph;
         	}
@@ -69,7 +78,7 @@ public class  pack3d {
 
         	if ( box.w < box.h) {
 
-                	int tmpw = box.w;
+                	float tmpw = box.w;
                 	box.w = box.h;
                 	box.h = tmpw;
         	}
@@ -77,7 +86,7 @@ public class  pack3d {
 
         	if ( box.w < box.l ) {
 
-                	int tmpw = box.w;
+                	float tmpw = box.w;
                 	box.w = box.l;
                 	box.l = tmpw;
 
@@ -85,7 +94,7 @@ public class  pack3d {
 
         	if ( box.h < box.l ) {
 
-               		int tmph = box.h;
+               		float tmph = box.h;
                 	box.h = box.l;
         	        box.l = tmph;
 	
@@ -113,9 +122,9 @@ public class  pack3d {
 	
 	private static void splitBin(shape bin, shape box) {
 
-		int dW = bin.w;
-		int dH = bin.h - box.h;
-		int dL = bin.l;
+		float dW = bin.w;
+		float dH = bin.h - box.h - tolKerf;
+		float dL = bin.l;
 
 		if ( dH == 0 )
 		        bin.d = null;
@@ -129,9 +138,9 @@ public class  pack3d {
 		}
 
 		
-		int rW = bin.w - box.w;
-		int rH = box.h;
-		int rL = bin.l;
+		float rW = bin.w - box.w - tolKerf;
+		float rH = box.h;
+		float rL = bin.l;
 
 		if ( rW == 0 )
 		        bin.r = null;
@@ -145,9 +154,9 @@ public class  pack3d {
 		}
 
 
-		int bW = box.w;
-                int bH = box.h;
-                int bL = bin.l - box.l;
+		float bW = box.w;
+                float bH = box.h;
+                float bL = bin.l - box.l - tolKerf;
 
                 if ( bW == 0 )
                         bin.b = null;

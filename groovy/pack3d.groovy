@@ -1,11 +1,15 @@
+if(args.length < 3) {
+
+        println"3 arguments required: bin size (eg. 5x5x5), box size (eg. 1x1x1) and tol+kerf (eg 1.25)"
+        return;
+}
 
 
-
-def bin =  [ x:0, y:0, z: 0,  w: args[0].split(',')[0] as int, h: args[0].split(',')[1] as int, l: args[0].split(',')[2] as int, sbind: null, sbinr:null, sbinb: null, t: 'root' ]
-def box =  [ x:0, y:0, z: 0,  w: args[1].split(',')[0] as int , h: args[1].split(',')[1] as int, l: args[1].split(',')[2] as int]
+def bin =  [  w: args[0].split('x')[0] as float, h: args[0].split('x')[1] as float, l: args[0].split('x')[2] as float, d: null, r:null, b: null ]
+def box =  [  w: args[1].split('x')[0] as float , h: args[1].split('x')[1] as float, l: args[1].split('x')[2] as float]
 
 fitCount =0
-
+tolKerf = args[2] as float
 
 def startTime = System.currentTimeMillis()
 
@@ -76,12 +80,14 @@ def packIt(bin, box) {
 
 		//if it fits split box and recurse
 		splitBin(bin, box)
-		if ( bin.sbind != null )
-			packIt(bin.sbind, box)
-		if( bin.sbinr != null )
-			packIt(bin.sbinr, box)
-		if ( bin.sbinb != null )
-			packIt(bin.sbinb, box)		
+		
+		
+		if ( bin.d != null )
+			packIt(bin.d, box)
+		if( bin.r != null )
+			packIt(bin.r, box)
+		if ( bin.b != null )
+			packIt(bin.b, box)		
 			
 	}
 	
@@ -91,33 +97,33 @@ def packIt(bin, box) {
 
 def splitBin(bin, box) {
 
-	def sbindW = bin.w
-	def sbindH = bin.h - box.h
-	def sbindL = bin.l
+	def dW = bin.w
+	def dH = bin.h - box.h - tolKerf
+	def dL = bin.l
 
-	if ( sbindH == 0 )
-		bin.sbind = null
+	if ( dH == 0 )
+		bin.d = null
 	else
-		bin.sbind = [ x: bin.x, y: bin.y + box.h, w: sbindW, h: sbindH , l: sbindL,  t: 'd']
+		bin.d = [ w: dW, h: dH , l: dL]
 	
-	def sbinrW = bin.w - box.w
-	def sbinrH = box.h
-	def sbinrL = bin.l
+	def rW = bin.w - box.w - tolKerf
+	def rH = box.h
+	def rL = bin.l
 
-	if ( sbinrW == 0)
-		bin.sbinr = null
+	if ( rW == 0)
+		bin.r = null
 	else
-		bin.sbinr = [ x: bin.x + box.w, y: bin.y, w: sbinrW, h: sbinrH, l: sbinrL, t: 'r']
+		bin.r = [ w: rW, h: rH, l: rL]
 
 
-	def sbinbW = box.w
-	def sbinbH = box.h
-	def sbinbL = bin.l - box.l
+	def bW = box.w
+	def bH = box.h
+	def bL = bin.l - box.l - tolKerf
 
-	if ( sbinbL == 0 )
-		bin.sbinb = null
+	if ( bL == 0 )
+		bin.b = null
 	else
-		bin.sbinb = [ x: bin.x + box.w, y: bin.y, w: sbinbW, h: sbinbH, l: sbinbL, t: 'b']
+		bin.b = [ w: bW, h: bH, l: bL]
 
 
 

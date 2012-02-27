@@ -5,20 +5,20 @@
 
 struct shape
 {
-	int w;
-	int h;
-	int l;
+	float w;
+	float h;
+	float l;
 	struct shape *r;
 	struct shape *d;
 	struct shape *b;
 };
 
 int fitCount = 0;
+float tolKerf;
 
 
 
-
-void getSizeVector(char size[], int sizeV[], char *del )
+void getSizeVector(char size[], float sizeV[], char *del )
 {
 
 
@@ -30,7 +30,7 @@ void getSizeVector(char size[], int sizeV[], char *del )
 
         while ( pchar != NULL)
         {
-                sizeV[i] = atoi(pchar);
+                sizeV[i] = atof(pchar);
                 i++;
                 pchar = strtok ( NULL, del );
 
@@ -42,9 +42,9 @@ void getSizeVector(char size[], int sizeV[], char *del )
 
 void splitBin(struct shape *bin, struct shape *box) {
 
-        int dW = bin->w;
-        int dH = bin->h - box->h;
-	int dL = bin->l;
+        float dW = bin->w;
+        float dH = bin->h - box->h - tolKerf;
+	float dL = bin->l;
 
 	if ( dH == 0 )
                 bin->d = NULL;
@@ -60,9 +60,9 @@ void splitBin(struct shape *bin, struct shape *box) {
 	}
 
 
-        int rW = bin->w - box->w;
-        int rH = box->h;
-	int rL = bin->l;
+        float rW = bin->w - box->w - tolKerf;
+        float rH = box->h;
+	float rL = bin->l;
 
         if ( rW == 0 )
                 bin->r = NULL;
@@ -78,9 +78,9 @@ void splitBin(struct shape *bin, struct shape *box) {
 	}
 
 
-	int bW = box->w;
-        int bH = box->h;
-        int bL = bin->l - box->l;
+	float bW = box->w;
+        float bH = box->h;
+        float bL = bin->l - box->l - tolKerf;
 
         if ( bL == 0 )
                 bin->b = NULL;
@@ -106,7 +106,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( bin->w < bin->h ) 
 	{
 
-                int tmpw = bin->w;
+                float tmpw = bin->w;
                 bin->w = bin->h;
                 bin->h = tmpw;
         }
@@ -115,7 +115,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->w < box->h ) 
 	{
 
-                int tmpw = box->w;
+                float tmpw = box->w;
                 box->w = box->h;
                 box->h = tmpw;
         }
@@ -123,7 +123,7 @@ void packIt( struct shape *bin, struct shape *box)
 	if ( bin->h < bin->l )
 	 {
 
-                int tmph = bin->h;
+                float tmph = bin->h;
                 bin->h = bin->l;
                 bin->l = tmph;
         }
@@ -133,7 +133,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->w < box->h) 
 	{
 
-                int tmpw = box->w;
+                float tmpw = box->w;
                 box->w = box->h;
                 box->h = tmpw;
         }
@@ -142,7 +142,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->w < box->l )
 	 {
 
-                int tmpw = box->w;
+                float tmpw = box->w;
                 box->w = box->l;
                 box->l = tmpw;
 
@@ -151,7 +151,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->h < box->l ) 
 	{
 
-                int tmph = box->h;
+                float tmph = box->h;
                 box->h = box->l;
                 box->l = tmph;
 
@@ -193,12 +193,21 @@ void packIt( struct shape *bin, struct shape *box)
 main(int argc, char * argv[])
 {
 
-	int binSizeV[3];
-	int boxSizeV[3];
-	
-	getSizeVector(argv[1], binSizeV, ",");
-	getSizeVector(argv[2], boxSizeV, ",");	
+	if ( argc < 4 )
+        {
+                printf("3 arguments required: bin size (eg. 5x5x5), box size (eg. 1x1x1) and tol+kerf (eg 1.25)\n");
+                exit(1);
 
+        }
+
+
+	float binSizeV[3];
+	float boxSizeV[3];
+	
+	getSizeVector(argv[1], binSizeV, "x");
+	getSizeVector(argv[2], boxSizeV, "x");	
+
+	tolKerf = atof(argv[3]);
 	
 
 	struct shape *bin;
