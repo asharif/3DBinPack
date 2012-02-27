@@ -1,0 +1,19 @@
+<project>
+	<target name="build">
+		<javac srcdir="." includeantruntime="false">
+			<classpath>
+				<pathelement path="jna.jar" />
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="clean">
+		<delete>
+			<fileset dir="." includes="*.class" />
+		</delete>
+
+	</target>
+
+
+</project>

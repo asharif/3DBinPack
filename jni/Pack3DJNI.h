@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     Pack3DJNI
  * Method:    getCount
- * Signature: (FFFFFF)I
+ * Signature: (FFFFFFF)I
  */
 JNIEXPORT jint JNICALL Java_Pack3DJNI_getCount
-  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat);
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat);
 
 #ifdef __cplusplus
 }

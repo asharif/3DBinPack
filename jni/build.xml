@@ -1,0 +1,15 @@
+<project>
+	<target name="build">
+		<javac srcdir="." includeantruntime="false" />
+
+	</target>
+
+	<target name="clean">
+		<delete>
+			<fileset dir="." includes="*.class" />
+		</delete>
+
+	</target>
+
+
+</project>

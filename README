@@ -25,6 +25,9 @@ many boxes  of that size fit in the bin
 
 I used it for figuring how to cut material with least amount of waste
 
+
+(Note:  For use of JNA or JNI you need to put the path of the .so file in the LD_LIBRARY_PATH)
+
 run it:
 
 groovy pack3d.groovy 5,5,5 1,1,1

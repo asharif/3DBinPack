@@ -14,13 +14,13 @@ struct shape
 };
 
 int fitCount = 0;
-
+float tolKerf;
 
 
 void splitBin(struct shape *bin, struct shape *box) {
 
         float dW = bin->w;
-        float dH = bin->h - box->h;
+        float dH = bin->h - box->h - tolKerf;
 	float dL = bin->l;
 
 	if ( dH == 0 )
@@ -37,7 +37,7 @@ void splitBin(struct shape *bin, struct shape *box) {
 	}
 
 
-        float rW = bin->w - box->w;
+        float rW = bin->w - box->w - tolKerf;
         float rH = box->h;
 	float rL = bin->l;
 
@@ -57,7 +57,7 @@ void splitBin(struct shape *bin, struct shape *box) {
 
 	float bW = box->w;
         float bH = box->h;
-        float bL = bin->l - box->l;
+        float bL = bin->l - box->l - tolKerf;
 
         if ( bL == 0 )
                 bin->b = NULL;
@@ -169,7 +169,7 @@ void packIt( struct shape *bin, struct shape *box)
 
 
 //this is what should be called at end of day!
-int getCount(float binsize1, float binsize2, float binsize3, float boxsize1, float boxsize2, float boxsize3)
+int getCount(float binsize1, float binsize2, float binsize3, float boxsize1, float boxsize2, float boxsize3, float tk)
 {
 
 	struct shape *bin;
@@ -188,6 +188,8 @@ int getCount(float binsize1, float binsize2, float binsize3, float boxsize1, flo
         box->w = boxsize1;
         box->h = boxsize2;
         box->l = boxsize3;
+
+	tolKerf = tk;
 
 	packIt(bin, box);
 

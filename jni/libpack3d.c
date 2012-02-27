@@ -1,9 +1,8 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<time.h>
 #include "Pack3DJNI.h"
-
 
 struct shape
 {
@@ -16,13 +15,13 @@ struct shape
 };
 
 int fitCount = 0;
-
+float tolKerf;
 
 
 void splitBin(struct shape *bin, struct shape *box) {
 
         float dW = bin->w;
-        float dH = bin->h - box->h;
+        float dH = bin->h - box->h - tolKerf;
 	float dL = bin->l;
 
 	if ( dH == 0 )
@@ -39,7 +38,7 @@ void splitBin(struct shape *bin, struct shape *box) {
 	}
 
 
-        float rW = bin->w - box->w;
+        float rW = bin->w - box->w - tolKerf;
         float rH = box->h;
 	float rL = bin->l;
 
@@ -59,7 +58,7 @@ void splitBin(struct shape *bin, struct shape *box) {
 
 	float bW = box->w;
         float bH = box->h;
-        float bL = bin->l - box->l;
+        float bL = bin->l - box->l - tolKerf;
 
         if ( bL == 0 )
                 bin->b = NULL;
@@ -144,38 +143,35 @@ void packIt( struct shape *bin, struct shape *box)
 
                 //if it fits split box and recurse
                 splitBin( bin, box );
-	
+		
 		if ( bin->d != NULL )
-                {
+		{
                         packIt( bin->d, box );
-                        free( bin->d );
-                }
+                	free( bin->d );
+		}
 
-                if( bin->r != NULL )
-                {
+		if( bin->r != NULL )
+                { 
 
-                       packIt( bin->r, box );
-                       free ( bin->r );
-
-                }
-                if( bin->b != NULL )
-                {
-
-                        packIt( bin->b, box );
-                        free ( bin->b );
-                }
-
+		       packIt( bin->r, box );
+		       free ( bin->r );
 			
-        }
+		}
+		if( bin->b != NULL )
+		{
+
+			packIt( bin->b, box );
+        		free ( bin->b );
+		}
+	}
 
 
 }
 
 
 //this is what should be called at end of day!
-
-JNIEXPORT jint JNICALL Java_Pack3DJNI_getCount  
-(JNIEnv *env, jobject obj, jfloat binsize1, jfloat binsize2, jfloat binsize3, jfloat boxsize1, jfloat boxsize2, jfloat boxsize3)
+JNIEXPORT jint JNICALL Java_Pack3DJNI_getCount
+(JNIEnv *env, jobject obj, jfloat binsize1, jfloat binsize2, jfloat binsize3, jfloat boxsize1, jfloat boxsize2, jfloat boxsize3, jfloat tk)
 {
 
 	struct shape *bin;
@@ -195,15 +191,14 @@ JNIEXPORT jint JNICALL Java_Pack3DJNI_getCount
         box->h = boxsize2;
         box->l = boxsize3;
 
+	tolKerf = tk;
+
 	packIt(bin, box);
 
 	free ( bin );
 	free ( box );
-
-
-
+	
 	return fitCount;
 
 }
-
 
