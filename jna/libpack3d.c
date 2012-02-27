@@ -5,9 +5,9 @@
 
 struct shape
 {
-	int w;
-	int h;
-	int l;
+	float w;
+	float h;
+	float l;
 	struct shape *r;
 	struct shape *d;
 	struct shape *b;
@@ -17,34 +17,11 @@ int fitCount = 0;
 
 
 
-
-void getSizeVector(char size[], int sizeV[], char *del )
-{
-
-
-        char * pchar;
-        pchar = strtok ( size,  del );
-
-        
-        int i = 0;
-
-        while ( pchar != NULL)
-        {
-                sizeV[i] = atoi(pchar);
-                i++;
-                pchar = strtok ( NULL, del );
-
-        }
-
-
-
-}
-
 void splitBin(struct shape *bin, struct shape *box) {
 
-        int dW = bin->w;
-        int dH = bin->h - box->h;
-	int dL = bin->l;
+        float dW = bin->w;
+        float dH = bin->h - box->h;
+	float dL = bin->l;
 
 	if ( dH == 0 )
                 bin->d = NULL;
@@ -60,9 +37,9 @@ void splitBin(struct shape *bin, struct shape *box) {
 	}
 
 
-        int rW = bin->w - box->w;
-        int rH = box->h;
-	int rL = bin->l;
+        float rW = bin->w - box->w;
+        float rH = box->h;
+	float rL = bin->l;
 
         if ( rW == 0 )
                 bin->r = NULL;
@@ -78,9 +55,9 @@ void splitBin(struct shape *bin, struct shape *box) {
 	}
 
 
-	int bW = box->w;
-        int bH = box->h;
-        int bL = bin->l - box->l;
+	float bW = box->w;
+        float bH = box->h;
+        float bL = bin->l - box->l;
 
         if ( bL == 0 )
                 bin->b = NULL;
@@ -106,7 +83,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( bin->w < bin->h ) 
 	{
 
-                int tmpw = bin->w;
+                float tmpw = bin->w;
                 bin->w = bin->h;
                 bin->h = tmpw;
         }
@@ -115,7 +92,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->w < box->h ) 
 	{
 
-                int tmpw = box->w;
+                float tmpw = box->w;
                 box->w = box->h;
                 box->h = tmpw;
         }
@@ -123,7 +100,7 @@ void packIt( struct shape *bin, struct shape *box)
 	if ( bin->h < bin->l )
 	 {
 
-                int tmph = bin->h;
+                float tmph = bin->h;
                 bin->h = bin->l;
                 bin->l = tmph;
         }
@@ -133,7 +110,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->w < box->h) 
 	{
 
-                int tmpw = box->w;
+                float tmpw = box->w;
                 box->w = box->h;
                 box->h = tmpw;
         }
@@ -142,7 +119,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->w < box->l )
 	 {
 
-                int tmpw = box->w;
+                float tmpw = box->w;
                 box->w = box->l;
                 box->l = tmpw;
 
@@ -151,7 +128,7 @@ void packIt( struct shape *bin, struct shape *box)
         if ( box->h < box->l ) 
 	{
 
-                int tmph = box->h;
+                float tmph = box->h;
                 box->h = box->l;
                 box->l = tmph;
 
@@ -171,72 +148,53 @@ void packIt( struct shape *bin, struct shape *box)
                         packIt( bin->d, box );
                 	free( bin->d );
 		}
-		
+
 		if( bin->r != NULL )
-		{
-                        packIt( bin->r, box );
-			free( bin->r );
+                { 
+
+		       packIt( bin->r, box );
+		       free ( bin->r );
+			
 		}
-		
 		if( bin->b != NULL )
 		{
+
 			packIt( bin->b, box );
-			free( bin->b );
+        		free ( bin->b );
 		}
-        }
+	}
 
 
 }
 
 
-
-main(int argc, char * argv[])
+//this is what should be called at end of day!
+int getCount(float binsize1, float binsize2, float binsize3, float boxsize1, float boxsize2, float boxsize3)
 {
 
-	int binSizeV[3];
-	int boxSizeV[3];
-	
-	getSizeVector(argv[1], binSizeV, ",");
-	getSizeVector(argv[2], boxSizeV, ",");	
-
-	
-
 	struct shape *bin;
-	struct shape *box;
-	bin = ( struct shape * ) malloc(sizeof( struct shape ));
-	box = ( struct shape *) malloc(sizeof( struct shape ) );
+        struct shape *box;
+        bin = ( struct shape * ) malloc(sizeof( struct shape ));
+        box = ( struct shape *) malloc(sizeof( struct shape ) );
 
 
 
-	bin->w = binSizeV[0];
-	bin->h = binSizeV[1];
-	bin->l = binSizeV[2];
-	bin->d = NULL;
-	bin->r = NULL;
-	bin->b = NULL;
-	box->w = boxSizeV[0];
-	box->h = boxSizeV[1];
-	box->l = boxSizeV[2];
+        bin->w = binsize1;
+        bin->h = binsize2;
+        bin->l = binsize3;
+        bin->d = NULL;
+        bin->r = NULL;
+        bin->b = NULL;
+        box->w = boxsize1;
+        box->h = boxsize2;
+        box->l = boxsize3;
 
-	struct timeval start;
-	struct timeval end;
-	
-	gettimeofday(&start);
-	
 	packIt(bin, box);
 
-	//free them!
-	free(bin);
-	free(box);
-
-	gettimeofday(&end);
+	free ( bin );
+	free ( box );
 	
-	long execTimeS = end.tv_sec - start.tv_sec;
-	long execTimeMicS = end.tv_usec  - start.tv_usec ;
+	return fitCount;
 
-	float fexecTime = (execTimeS*1000) + ((float)execTimeMicS)/1000;
-	
-
-	printf("found %d fits in %f ms\n", fitCount, fexecTime);
 }
-	
+
