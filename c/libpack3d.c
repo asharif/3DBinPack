@@ -2,33 +2,24 @@
 #include<string.h>
 #include<stdlib.h>
 #include<time.h>
+#include"libpack3d.h"
 
-struct shape
-{
-	float w;
-	float h;
-	float l;
-	struct shape *r;
-	struct shape *d;
-	struct shape *b;
-};
-
-int fitCount = 0;
-float tolKerf;
+int PACK3D_fitCount;
+float PACK3D_tolKerf;
 
 
-void splitBin(struct shape *bin, struct shape *box) {
+void PACK3D_splitBin(struct PACK3D_shape *bin, struct PACK3D_shape *box) {
 
         float dW = bin->w;
-        float dH = bin->h - box->h - tolKerf;
+        float dH = bin->h - box->h - PACK3D_tolKerf;
 	float dL = bin->l;
 
 	if ( dH == 0 )
                 bin->d = NULL;
         else
 	{
-		struct shape *binD;
-		binD = ( struct shape *) malloc(sizeof( struct shape ) );
+		struct PACK3D_shape *binD;
+		binD = ( struct PACK3D_shape *) malloc(sizeof( struct PACK3D_shape ) );
 		binD->w = dW;
 		binD->h = dH;
 		binD->l = dL;
@@ -37,7 +28,7 @@ void splitBin(struct shape *bin, struct shape *box) {
 	}
 
 
-        float rW = bin->w - box->w - tolKerf;
+        float rW = bin->w - box->w - PACK3D_tolKerf;
         float rH = box->h;
 	float rL = bin->l;
 
@@ -46,8 +37,8 @@ void splitBin(struct shape *bin, struct shape *box) {
         else
 	{
 
-		struct shape *binR;
-		binR = ( struct shape *) malloc( sizeof ( struct shape ) );
+		struct PACK3D_shape *binR;
+		binR = ( struct PACK3D_shape *) malloc( sizeof ( struct PACK3D_shape ) );
 		binR->w = rW;
 		binR->h = rH;
 		binR->l = rL;
@@ -57,15 +48,15 @@ void splitBin(struct shape *bin, struct shape *box) {
 
 	float bW = box->w;
         float bH = box->h;
-        float bL = bin->l - box->l - tolKerf;
+        float bL = bin->l - box->l - PACK3D_tolKerf;
 
         if ( bL == 0 )
                 bin->b = NULL;
         else
         {
 
-                struct shape *binB;
-                binB = ( struct shape *) malloc( sizeof ( struct shape ) );
+                struct PACK3D_shape *binB;
+                binB = ( struct PACK3D_shape *) malloc( sizeof ( struct PACK3D_shape ) );
                 binB->w = bW;
                 binB->h = bH;
                 binB->l = bL;
@@ -77,7 +68,7 @@ void splitBin(struct shape *bin, struct shape *box) {
 }
 
 
-void packIt( struct shape *bin, struct shape *box)
+void PACK3D_packIt( struct PACK3D_shape *bin, struct PACK3D_shape *box)
 {
 	//sort both bin and box
         if ( bin->w < bin->h ) 
@@ -138,28 +129,28 @@ void packIt( struct shape *bin, struct shape *box)
         if( box->w <= bin->w && box->h <= bin->h && box->l <= bin->l ) 
 	{
 
-                fitCount++;
+                PACK3D_fitCount++;
 
                 //if it fits split box and recurse
-                splitBin( bin, box );
+                PACK3D_splitBin( bin, box );
 		
 		if ( bin->d != NULL )
 		{
-                        packIt( bin->d, box );
+                        PACK3D_packIt( bin->d, box );
                 	free( bin->d );
 		}
 
 		if( bin->r != NULL )
                 { 
 
-		       packIt( bin->r, box );
+		       PACK3D_packIt( bin->r, box );
 		       free ( bin->r );
-			
+	
 		}
 		if( bin->b != NULL )
 		{
 
-			packIt( bin->b, box );
+			PACK3D_packIt( bin->b, box );
         		free ( bin->b );
 		}
 	}
@@ -169,13 +160,16 @@ void packIt( struct shape *bin, struct shape *box)
 
 
 //this is what should be called at end of day!
-int getCount(float binsize1, float binsize2, float binsize3, float boxsize1, float boxsize2, float boxsize3, float tk)
+int PACK3D_getCount(float binsize1, float binsize2, float binsize3, float boxsize1, float boxsize2, float boxsize3, float tk)
 {
 
-	struct shape *bin;
-        struct shape *box;
-        bin = ( struct shape * ) malloc(sizeof( struct shape ));
-        box = ( struct shape *) malloc(sizeof( struct shape ) );
+	
+	PACK3D_fitCount = 0;
+
+	struct PACK3D_shape *bin;
+        struct PACK3D_shape *box;
+        bin = ( struct PACK3D_shape * ) malloc(sizeof( struct PACK3D_shape ));
+        box = ( struct PACK3D_shape *) malloc(sizeof( struct PACK3D_shape ) );
 
 
 
@@ -189,14 +183,15 @@ int getCount(float binsize1, float binsize2, float binsize3, float boxsize1, flo
         box->h = boxsize2;
         box->l = boxsize3;
 
-	tolKerf = tk;
+	PACK3D_tolKerf = tk;
 
-	packIt(bin, box);
+	PACK3D_packIt(bin, box);
 
 	free ( bin );
 	free ( box );
-	
-	return fitCount;
+
+
+	return PACK3D_fitCount;
 
 }
 
