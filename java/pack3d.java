@@ -126,7 +126,7 @@ public class  pack3d {
 		float dH = bin.h - box.h - tolKerf;
 		float dL = bin.l;
 
-		if ( dH == 0 )
+		if ( dH <= 0 )
 		        bin.d = null;
 		else {
 
@@ -142,7 +142,7 @@ public class  pack3d {
 		float rH = box.h;
 		float rL = bin.l;
 
-		if ( rW == 0 )
+		if ( rW <= 0 )
 		        bin.r = null;
 		else {
 
@@ -158,7 +158,7 @@ public class  pack3d {
                 float bH = box.h;
                 float bL = bin.l - box.l - tolKerf;
 
-                if ( bW == 0 )
+                if ( bW <= 0 )
                         bin.b = null;
                 else {
 

@@ -14,7 +14,7 @@ void PACK3D_splitBin(struct PACK3D_shape *bin, struct PACK3D_shape *box) {
         float dH = bin->h - box->h - PACK3D_tolKerf;
 	float dL = bin->l;
 
-	if ( dH == 0 )
+	if ( dH <= 0 )
                 bin->d = NULL;
         else
 	{
@@ -32,7 +32,7 @@ void PACK3D_splitBin(struct PACK3D_shape *bin, struct PACK3D_shape *box) {
         float rH = box->h;
 	float rL = bin->l;
 
-        if ( rW == 0 )
+        if ( rW <= 0 )
                 bin->r = NULL;
         else
 	{
@@ -50,7 +50,7 @@ void PACK3D_splitBin(struct PACK3D_shape *bin, struct PACK3D_shape *box) {
         float bH = box->h;
         float bL = bin->l - box->l - PACK3D_tolKerf;
 
-        if ( bL == 0 )
+        if ( bL <= 0 )
                 bin->b = NULL;
         else
         {

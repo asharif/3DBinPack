@@ -101,7 +101,7 @@ def splitBin(bin, box) {
 	def dH = bin.h - box.h - tolKerf
 	def dL = bin.l
 
-	if ( dH == 0 )
+	if ( dH <= 0 )
 		bin.d = null
 	else
 		bin.d = [ w: dW, h: dH , l: dL]
@@ -110,7 +110,7 @@ def splitBin(bin, box) {
 	def rH = box.h
 	def rL = bin.l
 
-	if ( rW == 0)
+	if ( rW <= 0)
 		bin.r = null
 	else
 		bin.r = [ w: rW, h: rH, l: rL]
@@ -120,7 +120,7 @@ def splitBin(bin, box) {
 	def bH = box.h
 	def bL = bin.l - box.l - tolKerf
 
-	if ( bL == 0 )
+	if ( bL <= 0 )
 		bin.b = null
 	else
 		bin.b = [ w: bW, h: bH, l: bL]
