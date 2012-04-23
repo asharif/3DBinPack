@@ -80,12 +80,12 @@ void PACK3D_packIt( struct PACK3D_shape *bin, struct PACK3D_shape *box)
         }
 
 
-        if ( box->w < box->h ) 
+        if ( bin->w < bin->l ) 
 	{
 
-                float tmpw = box->w;
-                box->w = box->h;
-                box->h = tmpw;
+                float tmpw = bin->w;
+                bin->w = bin->l;
+                bin->l = tmpw;
         }
 
 	if ( bin->h < bin->l )

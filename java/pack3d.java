@@ -59,11 +59,11 @@ public class  pack3d {
 		}
 
 
-		if ( box.w < box.h) {
+		if ( bin.w < bin.l) {
 
-		        float tmpw = box.w;
-		        box.w = box.h;
-		        box.h = tmpw;
+		        float tmpw = bin.w;
+		        bin.w = bin.l;
+		        bin.l = tmpw;
 		}
 
 
@@ -158,7 +158,7 @@ public class  pack3d {
                 float bH = box.h;
                 float bL = bin.l - box.l - tolKerf;
 
-                if ( bW <= 0 )
+                if ( bL <= 0 )
                         bin.b = null;
                 else {
 
