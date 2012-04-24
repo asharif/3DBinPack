@@ -8,11 +8,10 @@ build_lib:
 	rm libpack3d.o
 build_lib_win:
 	gcc -c -DBUILDING_EXAMBLE_DLL libpack3d.c
-	gcc -shared -o libpack3d.dll libpack3d.o -Wl,--out-implib,libpack3d.a
+	gcc -shared -o libpack3d.dll libpack3d.o -Wl
 	del libpack3d.o
 clean:
 	rm -f pack3d
 	rm -f libpack3d.so
 clean_win:
-	del libpack3d.a
 	del libpack3d.dll
