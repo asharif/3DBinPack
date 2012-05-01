@@ -30,9 +30,9 @@ I used it for figuring how to cut material with least amount of waste
 
 run it:
 
-groovy pack3d.groovy 5,5,5 1,1,1
-java pack3d 5,5,5 1,1,1
-./pack3d 5,5,5 1,1,1
+groovy pack3d.groovy 5,5,5 1,1,1 0
+java pack3d 5,5,5 1,1,1 0,0,0
+./pack3d 5,5,5 1,1,1 0,0,0
 
 some benchmarks:
 
@@ -48,3 +48,6 @@ groovy: (NA too freaking slow to measure)
 java: 5198 ms
 c: 1162 ms
 
+
+
+****NOTE**** currently only java and c versions have the ability to use diff tolerance + kerf.  groovy only allows for 1 tol+kerf for all 'cuts' or 'fits'

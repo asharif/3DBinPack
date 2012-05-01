@@ -3,22 +3,29 @@ public class  pack3d {
 	
 	public static class shape {
 		
-		float w;
-		float h;
-		float l;
+		side w;
+		side h;
+		side l;
 		shape d;
 		shape r;
 		shape b;
 	}
 
+	public static class side {
+
+		float size;
+		char origSide;
+		float tk;
+
+	}
+
 	private static int fitCount = 0;
-	private static float tolKerf;
 
 	public static void main(String[] args) {
 
 
 		if ( args.length < 3 ) {
-                        System.out.println("3 arguments required: bin size (eg. 5x5x5), box size (eg. 1x1x1) and tol+kerf (eg 1.25)");
+                        System.out.println("3 arguments required: bin size (eg. 5x5x5), box size (eg. 1x1x1) and tol+kerf (eg 0.25,0.25,0.25)");
                         System.exit(1);
                 }
 
@@ -26,15 +33,32 @@ public class  pack3d {
 		shape bin = new shape();
 		shape box = new shape();
 		
-		bin.w = Float.parseFloat(args[0].split("x")[0]);
-		bin.h = Float.parseFloat(args[0].split("x")[1]);
-		bin.l = Float.parseFloat(args[0].split("x")[2]);
-	
-		box.w = Float.parseFloat(args[1].split("x")[0]);
-		box.h = Float.parseFloat(args[1].split("x")[1]);
-		box.l = Float.parseFloat(args[1].split("x")[2]);		
+		bin.w = new side();
+		bin.w.size = Float.parseFloat(args[0].split("x")[0]);
+		bin.w.origSide = 'w';
+		bin.w.tk = Float.parseFloat(args[2].split(",")[0]);
 
-		tolKerf = Float.parseFloat(args[2]);
+		bin.h = new side();
+		bin.h.size = Float.parseFloat(args[0].split("x")[1]);
+		bin.h.origSide = 'h';
+		bin.h.tk = Float.parseFloat(args[2].split(",")[1]);
+
+		bin.l = new side();
+		bin.l.size = Float.parseFloat(args[0].split("x")[2]);
+		bin.l.origSide = 'l';
+		bin.l.tk = Float.parseFloat(args[2].split(",")[2]);
+
+		box.w = new side();
+		box.w.size = Float.parseFloat(args[1].split("x")[0]);
+		box.w.origSide = 'w';
+
+		box.h = new side();
+		box.h.size = Float.parseFloat(args[1].split("x")[1]);
+		box.h.origSide = 'h';
+
+		box.l = new side();
+		box.l.size = Float.parseFloat(args[1].split("x")[2]);		
+		box.l.origSide = 'l';
 
 		long start = System.currentTimeMillis();
 		
@@ -51,50 +75,50 @@ public class  pack3d {
 
 
 		//sort both bin and box
-		if ( bin.w < bin.h) {
+		if ( bin.w.size < bin.h.size) {
 
-		        float tmpw = bin.w;
+		        side tmpw = bin.w;
 		        bin.w = bin.h;
 		        bin.h = tmpw;
 		}
 
 
-		if ( bin.w < bin.l) {
+		if ( bin.w.size < bin.l.size) {
 
-		        float tmpw = bin.w;
+		        side tmpw = bin.w;
 		        bin.w = bin.l;
 		        bin.l = tmpw;
 		}
 
 
-		if ( bin.h < bin.l ) {
+		if ( bin.h.size < bin.l.size ) {
 
-                	float tmph = bin.h;
+                	side tmph = bin.h;
                 	bin.h = bin.l;
                 	bin.l = tmph;
         	}
 
 
 
-        	if ( box.w < box.h) {
+        	if ( box.w.size < box.h.size ) {
 
-                	float tmpw = box.w;
+                	side tmpw = box.w;
                 	box.w = box.h;
                 	box.h = tmpw;
         	}
 
 
-        	if ( box.w < box.l ) {
+        	if ( box.w.size < box.l.size ) {
 
-                	float tmpw = box.w;
+                	side tmpw = box.w;
                 	box.w = box.l;
                 	box.l = tmpw;
 
         	}
 
-        	if ( box.h < box.l ) {
+        	if ( box.h.size < box.l.size ) {
 
-               		float tmph = box.h;
+               		side tmph = box.h;
                 	box.h = box.l;
         	        box.l = tmph;
 	
@@ -102,7 +126,7 @@ public class  pack3d {
 
 
 
-		if(box.w <= bin.w && box.h <= bin.h && box.l <= bin.l ) {
+		if(box.w.size <= bin.w.size && box.h.size <= bin.h.size && box.l.size <= bin.l.size ) {
 
 		        fitCount++;
 
@@ -122,41 +146,65 @@ public class  pack3d {
 	
 	private static void splitBin(shape bin, shape box) {
 
-		float dW = bin.w;
-		float dH = bin.h - box.h - tolKerf;
-		float dL = bin.l;
+		float dW = bin.w.size;
+		float dH = bin.h.size - box.h.size - bin.h.tk;
+		float dL = bin.l.size;
 
 		if ( dH <= 0 )
 		        bin.d = null;
 		else {
 
 			bin.d = new shape();
+			
+			bin.d.w = new side();
+			bin.d.h = new side();
+			bin.d.l = new side();
 
-			bin.d.w = dW;
-			bin.d.h = dH;
-			bin.d.l = dL;
+			bin.d.w.size = dW;
+			bin.d.w.origSide = bin.w.origSide;
+			bin.d.w.tk = bin.w.tk;
+
+			bin.d.h.size = dH;
+			bin.d.h.origSide = bin.h.origSide;
+			bin.d.h.tk = bin.h.tk;
+
+			bin.d.l.size = dL;
+			bin.d.l.origSide = bin.l.origSide;
+			bin.d.l.tk = bin.l.tk;
 		}
 
 		
-		float rW = bin.w - box.w - tolKerf;
-		float rH = box.h;
-		float rL = bin.l;
+		float rW = bin.w.size - box.w.size - bin.w.tk;
+		float rH = box.h.size;
+		float rL = bin.l.size;
 
 		if ( rW <= 0 )
 		        bin.r = null;
 		else {
 
 			bin.r = new shape();
-			
-			bin.r.w = rW;
-			bin.r.h = rH;
-			bin.r.l = rL;
+
+			bin.r.w = new side();
+			bin.r.h = new side();
+			bin.r.l = new side();
+
+			bin.r.w.size = rW;
+			bin.r.w.origSide = bin.w.origSide;
+			bin.r.w.tk = bin.w.tk;
+
+			bin.r.h.size = rH;
+			bin.r.h.origSide = bin.h.origSide;
+			bin.r.h.tk = bin.h.tk;
+
+			bin.r.l.size = rL;
+			bin.r.l.origSide = bin.l.origSide;
+			bin.r.l.tk = bin.l.tk;
 		}
 
 
-		float bW = box.w;
-                float bH = box.h;
-                float bL = bin.l - box.l - tolKerf;
+		float bW = box.w.size;
+                float bH = box.h.size;
+                float bL = bin.l.size - box.l.size - bin.l.tk;
 
                 if ( bL <= 0 )
                         bin.b = null;
@@ -164,9 +212,21 @@ public class  pack3d {
 
                         bin.b = new shape();
 
-                        bin.b.w = bW;
-                        bin.b.h = bH;
-                        bin.b.l = bL;
+			bin.b.w = new side();
+			bin.b.h = new side();
+			bin.b.l = new side();
+
+			bin.b.w.size = bW;
+			bin.b.w.origSide = bin.w.origSide;
+			bin.b.w.tk = bin.w.tk;
+
+			bin.b.h.size = bH;
+			bin.b.h.origSide = bin.h.origSide;
+			bin.b.h.tk = bin.h.tk;
+
+			bin.b.l.size = bL;
+			bin.b.l.origSide = bin.l.origSide;
+			bin.b.l.tk = bin.l.tk;
                 }
 
 
